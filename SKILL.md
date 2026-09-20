@@ -1,5 +1,6 @@
 ---
 name: html-questionnaire
+license: MIT
 description: Create offline HTML questionnaires to clarify the current user's needs, background, goals, and constraints, then use their returned answers to continue the task. Use when they request a questionnaire or personal intake, including learning plans and project requirements, or return answers from an earlier questionnaire. Applies to the current user's answers, not third-party surveys or external research.
 ---
 

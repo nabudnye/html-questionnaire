@@ -107,4 +107,4 @@ Safari, Firefox, physical mobile devices, a complete accessibility audit, and ac
 
 ## License
 
-A license has not been selected yet. No additional permission to use, modify, or redistribute the project is currently granted.
+This project is licensed under the [MIT License](LICENSE), which permits use, modification, commercial use, and distribution. Retain the copyright and license notices when distributing the project or substantial portions of it. Generated standalone HTML files include these notices.
