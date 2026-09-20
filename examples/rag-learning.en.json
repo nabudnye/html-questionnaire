@@ -1,0 +1,124 @@
+{
+  "schema_version": "2.0",
+  "survey_version": "0.2.0",
+  "survey_id": "rag-learning",
+  "language": "en",
+  "title": "RAG learning background",
+  "headline": "A learning path that starts with you.",
+  "context": "Try this interactive example to share your experience, goals, and constraints.\nCopy your answers back to the agent that created the questionnaire so it can plan your next step.",
+  "time_estimate": "About 2 minutes",
+  "sections": [
+    {
+      "id": "background",
+      "title": "Experience & goals"
+    },
+    {
+      "id": "constraints",
+      "title": "Time & environment"
+    }
+  ],
+  "questions": [
+    {
+      "id": "python",
+      "section": "background",
+      "type": "single",
+      "title": "What have you done with Python?",
+      "options": [
+        {
+          "id": "new",
+          "label": "I have not used Python yet"
+        },
+        {
+          "id": "scripts",
+          "label": "Written scripts, processed files, or called APIs"
+        },
+        {
+          "id": "apps",
+          "label": "Built a complete Python project"
+        }
+      ],
+      "hint": "Add experience with other languages in Additional context."
+    },
+    {
+      "id": "goal",
+      "section": "background",
+      "type": "single",
+      "title": "What would you like to achieve with RAG first?",
+      "options": [
+        {
+          "id": "understand",
+          "label": "Understand how retrieval, context, and generation work together"
+        },
+        {
+          "id": "prototype",
+          "label": "Build a small prototype that answers questions about my documents"
+        },
+        {
+          "id": "evaluate",
+          "label": "Improve answer quality in an existing prototype"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "section": "background",
+      "type": "multi",
+      "title": "Which documents would you like to use?",
+      "options": [
+        {
+          "id": "notes",
+          "label": "My Markdown notes or plain text"
+        },
+        {
+          "id": "pdf",
+          "label": "PDFs, books, or course materials"
+        },
+        {
+          "id": "none",
+          "label": "I have not chosen any documents yet",
+          "exclusive": true
+        }
+      ]
+    },
+    {
+      "id": "time",
+      "section": "constraints",
+      "type": "single",
+      "title": "How much time can you spend each week?",
+      "options": [
+        {
+          "id": "light",
+          "label": "Less than 3 hours"
+        },
+        {
+          "id": "regular",
+          "label": "3–6 hours"
+        },
+        {
+          "id": "intensive",
+          "label": "More than 6 hours"
+        }
+      ]
+    },
+    {
+      "id": "environment",
+      "section": "constraints",
+      "type": "multi",
+      "title": "Which constraints apply to your practice environment?",
+      "options": [
+        {
+          "id": "local",
+          "label": "My documents must stay on my computer"
+        },
+        {
+          "id": "api",
+          "label": "I can use paid model APIs"
+        },
+        {
+          "id": "free",
+          "label": "I want to use free resources only"
+        }
+      ]
+    }
+  ]
+}

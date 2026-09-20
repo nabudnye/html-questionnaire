@@ -1,11 +1,13 @@
 ---
 name: html-questionnaire
-description: Use when the user asks to create an HTML questionnaire, requests a personal needs or background intake for the current task, or returns its answers to continue that task. Applies to questionnaires the current user fills in, rather than third-party surveys or external research.
+description: Create offline HTML questionnaires to clarify the current user's needs, background, goals, and constraints, then use their returned answers to continue the task. Use when they request a questionnaire or personal intake, including learning plans and project requirements, or return answers from an earlier questionnaire. Applies to the current user's answers, not third-party surveys or external research.
 ---
 
 # HTML Questionnaire
 
-Gather the current user's task-relevant context in a local, self-contained HTML questionnaire, then use their returned answers to adapt the next step.
+Help the agent understand the user before planning their next step. Generate one offline HTML questionnaire, let the user fill it in, then use their compact Markdown or JSON answers to tailor a learning path, clarify project requirements, or continue the current task.
+
+No server or form account is needed. The questionnaire supports skippable choices, uncertainty, and free-text context; answers stay in the page until the user copies or downloads them. Built-in controls support English and Simplified Chinese.
 
 ## Choose the entry
 
@@ -21,7 +23,7 @@ Ordinary learning requests, external research, third-party survey design, and di
 1. Read the task and supplied context. Reuse known facts; check externally discoverable facts within the existing authorization.
 2. Ask only about information that is **unknown, user-supplied, and changes the next step**. Internally identify what each answer changes. Use enough questions to proceed; five to ten is a guide. If context is already sufficient, explain that the task can proceed directly.
 3. Ask one dimension per question. Use single choice for alternatives and multiple choice for compatible answers. Describe observable experiences and neutral facts for background questions. For tradeoffs, explain relevant differences. Treat knowledge dimensions separately, as self-reports rather than ability scores.
-4. Read [references/data-format.md](references/data-format.md) and reuse the bundled template. Every question is skippable, initially unselected, and has Other, exclusive Not sure, and an independent Additional context field. Keep Other text separate from supplementary context. Write questionnaire content in English.
+4. Read [references/data-format.md](references/data-format.md) and reuse the bundled template. Every question is skippable, initially unselected, and has Other, exclusive Not sure, and an independent Additional context field. Keep Other text separate from supplementary context. Write questionnaire content in the user's requested language, otherwise match their language. Set `language` to `zh-CN` for Simplified Chinese or `en` for English controls. For other content languages, use English controls and briefly disclose this limitation.
 5. Deliver one offline HTML file with brief opening, filling, and answer-return instructions. Explain that answers remain in page memory until copied or downloaded, and wait for the user's answer.
 
 ## Continue from answers

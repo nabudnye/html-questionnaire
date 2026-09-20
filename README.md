@@ -1,101 +1,112 @@
 # HTML 问卷（HTML Questionnaire）
 
-让 Agent 用一份离线 HTML 问卷了解你的需求与背景，再根据你回传的精简答卷推进任务。
+**让 AI 先了解你，再开始工作。**
 
-Skill 名称：`html-questionnaire` · 当前版本：`0.1.0`
+生成一份离线 HTML 问卷，收集你的背景、目标与约束；填写后将精简答卷交回 Agent，用于制定学习路线、澄清项目需求和推进下一步。
 
-## 适合什么场景
+[English](README.en.md) · [在线体验](https://nabudnye.github.io/html-questionnaire/) · [完整使用案例](examples/使用案例.md) · [skills.sh](https://skills.sh/nabudnye/html-questionnaire/html-questionnaire)
 
-当 Agent 需要了解你的学习基础、项目目标、使用环境或约束时，你可以主动发起问卷调研。例如：
+[![skills.sh 安装统计](https://skills.sh/b/nabudnye/html-questionnaire)](https://skills.sh/nabudnye/html-questionnaire)
 
-> 我想学习 RAG。请生成一份 HTML 问卷，了解我的技术背景和学习目标，方便你为我安排学习路线。
+![从填写问卷到导出答卷的交互演示](docs/media/walkthrough.gif)
 
-或者：
-
-> 我想做一个个人知识库，你调研一下我的需求。
-
-直接说“帮我创建一份 HTML 问卷”也属于入口：已有主题时直接生成，缺少主题时先简短确认。实际的自动发现与调用由所用 Agent 决定。
-
-本 Skill 面向当前用户填写、用于当前任务的调研。普通学习请求、外部资料研究、面向客户等第三方的调查，以及明确要求在聊天中进行的访谈，保持各自的处理方式。
-
-## 如何使用
-
-1. 在支持 Agent Skills 的 Agent 中安装完整 Skill 目录。
-2. 主动要求生成问卷，说明希望推进的任务。
-3. 用启用 JavaScript 的现代浏览器打开生成的 `.html` 文件。
-4. 选择符合自身情况的答案，也可以跳过问题或补充文字。
-5. 复制 Markdown 答卷，或下载 `.md`／`.json` 文件，再交回 Agent。
-
-Agent 会结合已选答案和补充说明调整下一步。未填写的信息保持未知；如果你这次只要求检查答卷格式，它就只进行格式检查。
-
-## 安装
-
-本仓库独立维护 `html-questionnaire`，采用通用 Agent Skills 目录结构。通过 [skills CLI](https://github.com/vercel-labs/skills) 安装：
+## 安装后，说这一句
 
 ```sh
 npx skills add nabudnye/html-questionnaire
 ```
 
-也可以先克隆仓库，再在仓库目录中从本地安装：
+> 我想学习 RAG。请用 html-questionnaire 生成一份中文 HTML 问卷，了解我的技术背景、学习目标和时间安排。等我交回答卷后，再帮我制定学习路线。
+
+Skill 名称：`html-questionnaire` · 当前版本：`0.2.0` · 生成需要 Node.js 18+ · 填写只需浏览器
+
+## 先试一份问卷
+
+不需要安装 Agent，也可以直接体验页面中的选择、补充说明、答卷预览与下载：
+
+| 场景 | 在线体验 | 问卷源数据 |
+| --- | --- | --- |
+| 根据背景制定 RAG 学习路线 | [中文问卷](https://nabudnye.github.io/html-questionnaire/) / [English](https://nabudnye.github.io/html-questionnaire/rag-learning.en.html) | [中文 JSON](examples/rag-learning.zh-CN.json) / [English JSON](examples/rag-learning.en.json) |
+| 澄清个人知识库需求 | [中文问卷](https://nabudnye.github.io/html-questionnaire/knowledge-base.html) | [JSON](examples/knowledge-base.zh-CN.json) |
+
+这些是固定的演示问卷。安装 Skill 后，Agent 会根据你的任务生成问题。在线演示仅负责填写与导出，不会连接模型或自动生成学习计划。[完整案例](examples/使用案例.md)展示了如何将答卷交回 Agent，以及回答如何影响下一步。
+
+也可以下载仓库中的 [RAG 问卷 HTML](docs/index.html)，保存完整文件后在本地浏览器打开。
+
+## 三步完成一次需求调研
+
+1. **说明任务，主动发起问卷。** 例如：“我想做一个个人知识库，请先用 HTML 问卷了解我的需求。”
+2. **打开生成的 HTML，按自己的情况填写。** 所有问题都可以跳过，也可以只写补充说明。
+3. **复制 Markdown 答卷，或下载 `.md` / `.json` 交回 Agent。** 请它根据答卷继续原任务。
+
+Agent 会结合已选答案和补充说明调整下一步。未填写的信息保持未知；如果这次只要求检查答卷格式，它就只进行格式检查。
+
+## 为什么适合任务开始之前
+
+- **一次集中说明背景。** 用单选、多选和补充说明表达经验、目标与约束。
+- **保留不确定性。** 初始不预选，支持“暂不确定”和跳过，避免把空白当作否定。
+- **交回精简答卷。** 省略未选选项、未回答题目和冗长提示，只保留实际回答。
+- **离线填写。** 自包含 HTML，无需服务器、表单账户或外部资源；页面不会上传答案。
+- **中英文界面。** 题目跟随用户语言生成；内置按钮、特殊选项和 Markdown 标题支持简体中文及英文。
+
+本 Skill 面向**当前用户填写、用于当前任务**的背景与需求调研。普通学习请求、外部资料研究、面向客户等第三方的调查，以及明确要求在聊天中进行的访谈，保持各自的处理方式。
+
+## 填写与隐私
+
+每题都有“其他答案”“暂不确定”和独立的“补充说明”。清除选择会保留输入的文字；其他答案只有在该选项选中时才导出，补充说明可以单独导出。无法自动复制时，页面会选中答卷供手动复制。
+
+**答案仅保存在页面内存中，刷新或关闭会丢失未导出的内容。** 离开前请复制或下载。你决定是否将答卷交给 Agent。托管演示的服务商会收到普通页面访问请求；问卷代码不发送答案，也不包含分析脚本。下载后的单文件可以完全离线使用。
+
+当前不包含自动保存、答案导入、条件分支或后端服务。问卷无需密码、API 密钥等凭据。
+
+## 安装、更新与兼容性
+
+使用 [skills CLI](https://github.com/vercel-labs/skills) 安装时，按提示选择目标 Agent 和安装范围。也可以克隆仓库后从本地安装：
 
 ```sh
 npx skills add . --skill html-questionnaire
 ```
 
-按交互提示选择目标 Agent 和安装范围。也可以使用目标 Agent 自身支持的安装方式，保留整个目录及内部相对路径。
-
-Skill 指令、数据约定和内置问卷界面为英文；此 README 为中文使用说明。各 Agent 的实际发现、安装和触发行为尚未逐一验证。
-
-## 问卷交互
-
-- 默认使用「暖墨书页」暗黑风格。
-- 仅使用单选和多选，所有题目都可以跳过，初始不预选答案。
-- 每题都有 `Other`（其他答案）和互斥的 `Not sure`（暂不确定）。
-- `Other` 用来填写选项之外的答案；独立的 `Additional context` 用来解释选择或补充情况，两者分别保存。
-- 没有选择任何选项时，也可以只填写补充说明。
-- 清除选择会保留已输入的文字；其他答案仅在 `Other` 被选中时导出。
-- 答卷预览和导出只包含有效回答，省略未选选项、未回答题目和冗长提示词。
-- 支持复制 Markdown、下载 Markdown 和下载 JSON。自动复制不可用时，可手动选中复制。
-
-## 离线与隐私
-
-生成结果是自包含 HTML，不需要服务器或联网资源。页面本身不会上传答案；你决定是否将答卷交给 Agent。
-
-答案仅保存在当前页面内存中，刷新或关闭页面会丢失未导出的内容。离开前请先复制或下载。下载后的答卷可能包含个人背景或项目约束，请根据内容妥善保存和分享。
-
-当前版本不包含自动保存、答案导入、条件分支或后端服务。问卷收集任务相关背景，不需要提供密码、API 密钥等凭据。
-
-## 手动生成问卷
-
-通常由 Agent 按需生成数据并调用脚本。需要手动生成时，先依据[数据格式说明](references/data-format.md)准备 `survey.json`，再从本仓库根目录运行：
+已安装用户可以运行：
 
 ```sh
-node scripts/build.cjs survey.json questionnaire.html
+npx skills update
 ```
 
-生成脚本使用 Node.js 18 或更新版本，无需安装额外 npm 依赖。输出目录需已存在；已有输出文件会被保留，修改问卷后请使用新的文件名。
+仓库采用通用 Agent Skills 目录结构，请保留完整目录及内部相对路径。浏览器验证与 CLI 安装验证的范围见下方；各 Agent 的自动发现、模型触发和完整会话效果尚未逐一实测，不将结构兼容视作已验证支持。
 
-填写生成结果只需要浏览器，不需要 Node.js。没有 Node.js 的 Agent 可以按数据格式说明中的替代流程，将模板和数据组装为单文件 HTML。
+## 自己生成与维护演示
 
-## 发布文件
+先按[数据格式说明](references/data-format.md)准备问卷数据，也可以直接使用示例：
 
-| 文件 | 用途 |
-| --- | --- |
-| `SKILL.md` | 触发条件、出题规则和答卷处理指令 |
-| `assets/questionnaire.html` | 暗黑页面模板与界面交互 |
-| `assets/questionnaire-core.js` | 数据校验、选择状态和精简导出 |
-| `scripts/build.cjs` | 将问卷数据和模板打包为离线 HTML |
-| `references/data-format.md` | 数据字段与生成约定 |
-| `README.md` | 中文使用说明 |
+```sh
+node scripts/build.cjs examples/rag-learning.zh-CN.json questionnaire.html
+```
 
-样例、测试和评测记录保留在开发环境中，不包含在此发布目录。
+生成无需额外 npm 依赖。输出目录需已存在；已有输出文件会被保留，修改后请使用新的文件名。没有 Node.js 的 Agent 可按数据格式说明中的替代流程组装单文件 HTML。
+
+更新模板或示例后，重新生成三个公开演示页面：
+
+```sh
+node scripts/build-demos.cjs
+node --test tests/*.test.cjs
+```
+
+`build-demos.cjs` 只覆盖 `docs/` 中三个约定的演示 HTML。GitHub Pages 使用 `main` 分支的 `docs/` 目录。
 
 ## 验证范围
 
-本版本已进行选择互斥、文本保留、精简导出、安全嵌入和文件保护等代码测试，并检查了 Skill 结构及部分语义场景。
+本次在 macOS 上完成以下检查：
 
-实际浏览器渲染、完整键盘操作、剪贴板和下载行为，以及各 Agent 的真实安装触发，仍需在对应环境中验证。跨 Agent 的通用结构不等同于每个宿主均已实测通过。
+| 检查 | 结果与范围 |
+| --- | --- |
+| 核心与构建回归 | 6 项通过：默认英文兼容、中文导出、互斥选择、文字保留、安全嵌入、已有文件保护 |
+| Chromium 151 桌面与手机尺寸 | 1280×900、390×844；中英文渲染、主要键盘操作、复制与手动回退、Markdown/JSON 下载、刷新清空、离线打开均通过；无控制台错误或外部资源请求 |
+| skills CLI 1.7.0 安装 | 在临时项目中向 Codex、Claude Code 目录安装成功，并分别从安装后的脚本生成 HTML；测试安装关闭遥测 |
+| Skill 结构 | frontmatter、命名和引用检查通过 |
+
+Safari、Firefox、真实手机、完整无障碍审计及不同 Agent 的实际会话与自动触发尚未验证。
 
 ## 许可证
 
-许可证尚待确定；当前没有声明额外的开源使用、修改或再分发授权。
+许可证尚待作者确定；当前没有声明额外的开源使用、修改或再分发授权。

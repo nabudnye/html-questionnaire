@@ -1,0 +1,124 @@
+{
+  "schema_version": "2.0",
+  "survey_version": "0.2.0",
+  "survey_id": "rag-learning",
+  "language": "zh-CN",
+  "title": "RAG 学习背景问卷",
+  "headline": "一份适合你的学习路线，从这里开始。",
+  "context": "这是一份可填写的演示问卷，用于了解你的基础、目标与时间安排。\n填写后，复制答卷并交回生成问卷的 Agent，让它据此安排下一步。",
+  "time_estimate": "约 2 分钟",
+  "sections": [
+    {
+      "id": "background",
+      "title": "经验与目标"
+    },
+    {
+      "id": "constraints",
+      "title": "时间与环境"
+    }
+  ],
+  "questions": [
+    {
+      "id": "python",
+      "section": "background",
+      "type": "single",
+      "title": "你目前用 Python 做过哪些事情？",
+      "options": [
+        {
+          "id": "new",
+          "label": "还没有用过 Python"
+        },
+        {
+          "id": "scripts",
+          "label": "写过脚本，处理过文件或调用过 API"
+        },
+        {
+          "id": "apps",
+          "label": "做过较完整的 Python 项目"
+        }
+      ],
+      "hint": "其他语言的经验可以写在补充说明中。"
+    },
+    {
+      "id": "goal",
+      "section": "background",
+      "type": "single",
+      "title": "这次学习 RAG，你最想先实现什么？",
+      "options": [
+        {
+          "id": "understand",
+          "label": "理解检索、上下文与生成如何协作"
+        },
+        {
+          "id": "prototype",
+          "label": "做一个能回答自己文档问题的小原型"
+        },
+        {
+          "id": "evaluate",
+          "label": "改进现有原型的回答质量"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "section": "background",
+      "type": "multi",
+      "title": "你准备使用哪些学习资料或文档？",
+      "options": [
+        {
+          "id": "notes",
+          "label": "自己的 Markdown 笔记或纯文本"
+        },
+        {
+          "id": "pdf",
+          "label": "PDF、电子书或课程讲义"
+        },
+        {
+          "id": "none",
+          "label": "还没有选定资料",
+          "exclusive": true
+        }
+      ]
+    },
+    {
+      "id": "time",
+      "section": "constraints",
+      "type": "single",
+      "title": "接下来每周大约能投入多少时间？",
+      "options": [
+        {
+          "id": "light",
+          "label": "不到 3 小时"
+        },
+        {
+          "id": "regular",
+          "label": "3–6 小时"
+        },
+        {
+          "id": "intensive",
+          "label": "6 小时以上"
+        }
+      ]
+    },
+    {
+      "id": "environment",
+      "section": "constraints",
+      "type": "multi",
+      "title": "练习时有哪些需要考虑的环境约束？",
+      "options": [
+        {
+          "id": "local",
+          "label": "文档只能在本地处理"
+        },
+        {
+          "id": "api",
+          "label": "可以使用付费模型 API"
+        },
+        {
+          "id": "free",
+          "label": "希望只使用免费资源"
+        }
+      ]
+    }
+  ]
+}

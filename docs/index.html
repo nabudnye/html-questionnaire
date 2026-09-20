@@ -1,11 +1,18 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
-  <title>HTML Questionnaire</title>
+  <title>RAG 学习背景问卷</title>
+  <meta name="description" content="体验离线 HTML 问卷：说明你的背景、目标与约束，将精简答卷交回 Agent，推进下一步。">
+  <link rel="canonical" href="https://nabudnye.github.io/html-questionnaire/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="RAG 学习背景问卷">
+  <meta property="og:description" content="体验离线 HTML 问卷：说明你的背景、目标与约束，将精简答卷交回 Agent，推进下一步。">
+  <meta property="og:url" content="https://nabudnye.github.io/html-questionnaire/">
+  <meta property="og:image" content="https://nabudnye.github.io/html-questionnaire/media/preview.zh.png">
   <style>
     :root {
       color-scheme: dark;
@@ -133,9 +140,292 @@
       <p class="footnote" data-i18n>Your answers stay in this page's memory. Refreshing or closing it clears unexported changes. Copy or download your answers before leaving. This page works offline and does not upload answers.</p>
     </main>
   </div>
-  <script id="survey-data" type="application/json"><!--QUESTIONNAIRE_DATA--></script>
+  <script id="survey-data" type="application/json">{
+  "schema_version": "2.0",
+  "survey_version": "0.2.0",
+  "survey_id": "rag-learning",
+  "language": "zh-CN",
+  "title": "RAG 学习背景问卷",
+  "headline": "一份适合你的学习路线，从这里开始。",
+  "context": "这是一份可填写的演示问卷，用于了解你的基础、目标与时间安排。\n填写后，复制答卷并交回生成问卷的 Agent，让它据此安排下一步。",
+  "time_estimate": "约 2 分钟",
+  "sections": [
+    {
+      "id": "background",
+      "title": "经验与目标"
+    },
+    {
+      "id": "constraints",
+      "title": "时间与环境"
+    }
+  ],
+  "questions": [
+    {
+      "id": "python",
+      "section": "background",
+      "type": "single",
+      "title": "你目前用 Python 做过哪些事情？",
+      "options": [
+        {
+          "id": "new",
+          "label": "还没有用过 Python"
+        },
+        {
+          "id": "scripts",
+          "label": "写过脚本，处理过文件或调用过 API"
+        },
+        {
+          "id": "apps",
+          "label": "做过较完整的 Python 项目"
+        }
+      ],
+      "hint": "其他语言的经验可以写在补充说明中。"
+    },
+    {
+      "id": "goal",
+      "section": "background",
+      "type": "single",
+      "title": "这次学习 RAG，你最想先实现什么？",
+      "options": [
+        {
+          "id": "understand",
+          "label": "理解检索、上下文与生成如何协作"
+        },
+        {
+          "id": "prototype",
+          "label": "做一个能回答自己文档问题的小原型"
+        },
+        {
+          "id": "evaluate",
+          "label": "改进现有原型的回答质量"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "section": "background",
+      "type": "multi",
+      "title": "你准备使用哪些学习资料或文档？",
+      "options": [
+        {
+          "id": "notes",
+          "label": "自己的 Markdown 笔记或纯文本"
+        },
+        {
+          "id": "pdf",
+          "label": "PDF、电子书或课程讲义"
+        },
+        {
+          "id": "none",
+          "label": "还没有选定资料",
+          "exclusive": true
+        }
+      ]
+    },
+    {
+      "id": "time",
+      "section": "constraints",
+      "type": "single",
+      "title": "接下来每周大约能投入多少时间？",
+      "options": [
+        {
+          "id": "light",
+          "label": "不到 3 小时"
+        },
+        {
+          "id": "regular",
+          "label": "3–6 小时"
+        },
+        {
+          "id": "intensive",
+          "label": "6 小时以上"
+        }
+      ]
+    },
+    {
+      "id": "environment",
+      "section": "constraints",
+      "type": "multi",
+      "title": "练习时有哪些需要考虑的环境约束？",
+      "options": [
+        {
+          "id": "local",
+          "label": "文档只能在本地处理"
+        },
+        {
+          "id": "api",
+          "label": "可以使用付费模型 API"
+        },
+        {
+          "id": "free",
+          "label": "希望只使用免费资源"
+        }
+      ]
+    }
+  ]
+}</script>
   <script id="questionnaire-core">
-<!--QUESTIONNAIRE_CORE-->
+'use strict';
+
+const Questionnaire = (() => {
+  const SPECIAL = Object.freeze([
+    Object.freeze({ id: 'other', label: 'Other' }),
+    Object.freeze({ id: 'uncertain', label: 'Not sure / Need more information', exclusive: true })
+  ]);
+  const SPECIAL_ZH = Object.freeze([
+    Object.freeze({ id: 'other', label: '其他答案' }),
+    Object.freeze({ id: 'uncertain', label: '暂不确定 / 需要更多信息', exclusive: true })
+  ]);
+
+  function invalid(location, message) {
+    throw new Error(`Invalid survey at ${location}: ${message}`);
+  }
+
+  function object(value, location, keys) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) invalid(location, 'expected an object');
+    for (const key of Object.keys(value)) if (!keys.includes(key)) invalid(`${location}.${key}`, 'unsupported field');
+  }
+
+  function text(value, location, singleLine = false) {
+    if (typeof value !== 'string' || !value.trim()) invalid(location, 'expected nonempty text');
+    if (singleLine && /[\r\n]/.test(value)) invalid(location, 'expected a single line');
+  }
+
+  function id(value, location) {
+    if (typeof value !== 'string' || !/^[a-z][a-z0-9-]*$/.test(value)) invalid(location, 'use a lowercase letter followed by letters, digits or hyphens');
+  }
+
+  function unique(values, location) {
+    if (new Set(values).size !== values.length) invalid(location, 'identifiers must be unique');
+  }
+
+  function validateSurvey(survey) {
+    object(survey, 'root', ['schema_version', 'survey_id', 'survey_version', 'language', 'title', 'headline', 'context', 'time_estimate', 'sections', 'questions']);
+    if (survey.schema_version !== '2.0') invalid('schema_version', 'expected 2.0');
+    if (survey.language !== undefined && !['en', 'zh-CN'].includes(survey.language)) invalid('language', 'expected en or zh-CN');
+    id(survey.survey_id, 'survey_id');
+    text(survey.survey_version, 'survey_version', true);
+    text(survey.title, 'title', true);
+    text(survey.context, 'context');
+    if (survey.headline !== undefined) text(survey.headline, 'headline', true);
+    if (survey.time_estimate !== undefined) text(survey.time_estimate, 'time_estimate', true);
+    if (!Array.isArray(survey.sections) || !survey.sections.length) invalid('sections', 'provide at least one section');
+    survey.sections.forEach((section, i) => {
+      const loc = `sections[${i}]`;
+      object(section, loc, ['id', 'title']);
+      id(section.id, `${loc}.id`);
+      text(section.title, `${loc}.title`, true);
+    });
+    unique(survey.sections.map(s => s.id), 'sections');
+    if (!Array.isArray(survey.questions) || !survey.questions.length) invalid('questions', 'provide at least one question');
+    survey.questions.forEach((q, i) => {
+      const loc = `questions[${i}]`;
+      object(q, loc, ['id', 'section', 'type', 'title', 'hint', 'options']);
+      id(q.id, `${loc}.id`);
+      if (!survey.sections.some(s => s.id === q.section)) invalid(`${loc}.section`, 'reference an existing section');
+      if (!['single', 'multi'].includes(q.type)) invalid(`${loc}.type`, 'expected single or multi');
+      text(q.title, `${loc}.title`, true);
+      if (q.hint !== undefined) text(q.hint, `${loc}.hint`);
+      if (!Array.isArray(q.options) || !q.options.length) invalid(`${loc}.options`, 'provide at least one ordinary option');
+      q.options.forEach((option, j) => {
+        const optionLoc = `${loc}.options[${j}]`;
+        object(option, optionLoc, ['id', 'label', 'exclusive']);
+        id(option.id, `${optionLoc}.id`);
+        if (SPECIAL.some(s => s.id === option.id)) invalid(`${optionLoc}.id`, 'special options are added automatically');
+        text(option.label, `${optionLoc}.label`, true);
+        if (option.exclusive !== undefined && typeof option.exclusive !== 'boolean') invalid(`${optionLoc}.exclusive`, 'expected a boolean');
+      });
+      unique(q.options.map(o => o.id), `${loc}.options`);
+    });
+    unique(survey.questions.map(q => q.id), 'questions');
+    return survey;
+  }
+
+  function allOptions(question, language = 'en') {
+    return [...question.options, ...(language === 'zh-CN' ? SPECIAL_ZH : SPECIAL)];
+  }
+
+  function createState(survey) {
+    validateSurvey(survey);
+    return new Map(survey.questions.map(q => [q.id, { selected: [], other_text: '', supplement: '' }]));
+  }
+
+  function nextSelection(question, current, optionId, checked) {
+    const options = allOptions(question);
+    const option = options.find(o => o.id === optionId);
+    if (!option) throw new Error(`Unknown option: ${optionId}`);
+    if (question.type === 'single') return checked ? [optionId] : [];
+    if (!checked) return current.filter(value => value !== optionId);
+    if (option.exclusive) return [optionId];
+    const exclusive = new Set(options.filter(o => o.exclusive).map(o => o.id));
+    return [...current.filter(value => value !== optionId && !exclusive.has(value)), optionId];
+  }
+
+  function clearSelection(state, questionId) {
+    const answer = state.get(questionId);
+    if (!answer) throw new Error(`Unknown question: ${questionId}`);
+    answer.selected = [];
+  }
+
+  function answerStatus(answer) {
+    if (answer.selected.includes('uncertain')) return 'uncertain';
+    if (answer.selected.length) return 'answered';
+    if (answer.supplement.trim()) return 'supplement_only';
+    return 'unanswered';
+  }
+
+  function snapshot(survey, state) {
+    const answers = survey.questions.flatMap(q => {
+      const a = state.get(q.id);
+      const status = answerStatus(a);
+      if (status === 'unanswered') return [];
+      const answer = { question_id: q.id, question: q.title, status };
+      if (a.selected.length) answer.selected_options = allOptions(q, survey.language)
+        .filter(o => a.selected.includes(o.id)).map(o => ({ id: o.id, label: o.label }));
+      if (a.selected.includes('other')) answer.other_text = a.other_text;
+      if (a.supplement.trim()) answer.supplement = a.supplement;
+      return [answer];
+    });
+    return {
+      schema_version: survey.schema_version, survey_id: survey.survey_id,
+      survey_version: survey.survey_version, title: survey.title, answers
+    };
+  }
+
+  function markdownText(value) {
+    return String(value).replace(/([\\`*_{}\[\]<>()#+!|~=&-])/g, '\\$1')
+      .replace(/^([ \t]*\d{1,9})\./gm, '$1\\.');
+  }
+
+  function quote(value) {
+    return value.split(/\r\n|\r|\n/).map(line => '> ' + markdownText(line)).join('\n');
+  }
+
+  function markdown(answer, language = 'en') {
+    const labels = language === 'zh-CN'
+      ? { empty: '尚未填写答案。', answer: '答案：', answers: '答案：', other: '其他答案：', unspecified: '未说明', context: '补充说明：' }
+      : { empty: 'No answers yet.', answer: 'Answer: ', answers: 'Answers:', other: 'Other answer:', unspecified: 'Not specified', context: 'Additional context:' };
+    const lines = ['# ' + markdownText(answer.title), ''];
+    if (!answer.answers.length) lines.push(labels.empty, '');
+    for (const a of answer.answers) {
+      lines.push('## ' + markdownText(a.question), '');
+      const selected = (a.selected_options || []).filter(o => o.id !== 'other');
+      if (selected.length === 1) lines.push(labels.answer + markdownText(selected[0].label), '');
+      if (selected.length > 1) lines.push(labels.answers, '', ...selected.map(o => '- ' + markdownText(o.label)), '');
+      if (Object.hasOwn(a, 'other_text')) {
+        if (a.other_text.trim()) lines.push(labels.other, '', quote(a.other_text), '');
+        else lines.push(labels.other + ' ' + labels.unspecified, '');
+      }
+      if (a.supplement) lines.push(labels.context, '', quote(a.supplement), '');
+    }
+    return lines.join('\n');
+  }
+
+  return Object.freeze({ validateSurvey, allOptions, createState, nextSelection, clearSelection, answerStatus, snapshot, markdown });
+})();
+
+if (typeof module !== 'undefined' && module.exports) module.exports = Questionnaire;
+
   </script>
   <script id="questionnaire-ui">
   'use strict';

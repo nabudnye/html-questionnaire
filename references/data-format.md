@@ -21,6 +21,7 @@ Return the generated HTML, not the unfilled template. Opening the file requires 
   "schema_version": "2.0",
   "survey_id": "project-intake",
   "survey_version": "0.1.0",
+  "language": "en",
   "title": "Project intake",
   "headline": "A useful place to begin.",
   "context": "Your answers will help choose the next implementation step.",
@@ -40,7 +41,9 @@ Return the generated HTML, not the unfilled template. Opening the file requires 
 }
 ```
 
-Root `headline` and `time_estimate`, question `hint`, and option `exclusive` are the only optional fields. All other displayed fields are required **for the data schema**, not for the user's responses. Additional keys are rejected. Use `single` or `multi` for `type`.
+Root `language`, `headline`, and `time_estimate`, question `hint`, and option `exclusive` are the only optional fields. All other displayed fields are required **for the data schema**, not for the user's responses. Additional keys are rejected. Use `single` or `multi` for `type`.
+
+`language` accepts `en` (the default when omitted) or `zh-CN`. It selects built-in controls, special option labels, and Markdown export headings. Write question content in the user's language; it is not automatically translated. JSON field names and option identifiers remain stable across languages. This optional field extends input schema 2.0; existing inputs without it keep their English controls.
 
 - All identifiers start with a lowercase letter, followed by lowercase letters, digits, or hyphens.
 - Section and question identifiers are unique within the survey; option identifiers are unique within each question. Each question references an existing section.

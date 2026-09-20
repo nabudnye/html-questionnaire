@@ -1,0 +1,118 @@
+{
+  "schema_version": "2.0",
+  "survey_version": "0.2.0",
+  "survey_id": "knowledge-base",
+  "language": "zh-CN",
+  "title": "个人知识库需求问卷",
+  "headline": "先明确需求，再决定怎么搭建。",
+  "context": "这是一份个人知识库需求调研的演示问卷。\n你的回答将帮助 Agent 确定资料导入方式、搜索能力和第一版范围。",
+  "time_estimate": "约 2 分钟",
+  "sections": [
+    {
+      "id": "needs",
+      "title": "资料与使用方式"
+    },
+    {
+      "id": "scope",
+      "title": "约束与第一步"
+    }
+  ],
+  "questions": [
+    {
+      "id": "sources",
+      "section": "needs",
+      "type": "multi",
+      "title": "你需要整理哪些资料？",
+      "options": [
+        {
+          "id": "markdown",
+          "label": "Markdown 笔记与纯文本"
+        },
+        {
+          "id": "pdf",
+          "label": "PDF 文档"
+        },
+        {
+          "id": "links",
+          "label": "网页链接或收藏"
+        }
+      ]
+    },
+    {
+      "id": "workflow",
+      "section": "needs",
+      "type": "single",
+      "title": "你最想解决哪个日常问题？",
+      "options": [
+        {
+          "id": "find",
+          "label": "快速找到记得见过的内容"
+        },
+        {
+          "id": "answer",
+          "label": "围绕资料提问，并找到答案出处"
+        },
+        {
+          "id": "organize",
+          "label": "整理分类和重复内容"
+        }
+      ]
+    },
+    {
+      "id": "privacy",
+      "section": "scope",
+      "type": "single",
+      "title": "这些资料适合在哪里处理？",
+      "options": [
+        {
+          "id": "local",
+          "label": "只能保留在自己的设备上"
+        },
+        {
+          "id": "cloud",
+          "label": "可以使用云服务处理非敏感资料"
+        }
+      ]
+    },
+    {
+      "id": "maintenance",
+      "section": "scope",
+      "type": "single",
+      "title": "你愿意投入多少维护工作？",
+      "options": [
+        {
+          "id": "minimal",
+          "label": "希望安装后基本不用维护"
+        },
+        {
+          "id": "some",
+          "label": "可以定期配置、升级和备份"
+        },
+        {
+          "id": "code",
+          "label": "愿意写代码扩展功能"
+        }
+      ]
+    },
+    {
+      "id": "first-step",
+      "section": "scope",
+      "type": "single",
+      "title": "你希望第一步得到什么？",
+      "options": [
+        {
+          "id": "compare",
+          "label": "比较适合自己的现有工具"
+        },
+        {
+          "id": "prototype",
+          "label": "做一个小规模、可运行的原型"
+        },
+        {
+          "id": "plan",
+          "label": "先明确方案、成本和实施步骤"
+        }
+      ]
+    }
+  ]
+}

@@ -5,6 +5,10 @@ const Questionnaire = (() => {
     Object.freeze({ id: 'other', label: 'Other' }),
     Object.freeze({ id: 'uncertain', label: 'Not sure / Need more information', exclusive: true })
   ]);
+  const SPECIAL_ZH = Object.freeze([
+    Object.freeze({ id: 'other', label: '其他答案' }),
+    Object.freeze({ id: 'uncertain', label: '暂不确定 / 需要更多信息', exclusive: true })
+  ]);
 
   function invalid(location, message) {
     throw new Error(`Invalid survey at ${location}: ${message}`);
@@ -29,8 +33,9 @@ const Questionnaire = (() => {
   }
 
   function validateSurvey(survey) {
-    object(survey, 'root', ['schema_version', 'survey_id', 'survey_version', 'title', 'headline', 'context', 'time_estimate', 'sections', 'questions']);
+    object(survey, 'root', ['schema_version', 'survey_id', 'survey_version', 'language', 'title', 'headline', 'context', 'time_estimate', 'sections', 'questions']);
     if (survey.schema_version !== '2.0') invalid('schema_version', 'expected 2.0');
+    if (survey.language !== undefined && !['en', 'zh-CN'].includes(survey.language)) invalid('language', 'expected en or zh-CN');
     id(survey.survey_id, 'survey_id');
     text(survey.survey_version, 'survey_version', true);
     text(survey.title, 'title', true);
@@ -69,8 +74,8 @@ const Questionnaire = (() => {
     return survey;
   }
 
-  function allOptions(question) {
-    return [...question.options, ...SPECIAL];
+  function allOptions(question, language = 'en') {
+    return [...question.options, ...(language === 'zh-CN' ? SPECIAL_ZH : SPECIAL)];
   }
 
   function createState(survey) {
@@ -108,7 +113,7 @@ const Questionnaire = (() => {
       const status = answerStatus(a);
       if (status === 'unanswered') return [];
       const answer = { question_id: q.id, question: q.title, status };
-      if (a.selected.length) answer.selected_options = allOptions(q)
+      if (a.selected.length) answer.selected_options = allOptions(q, survey.language)
         .filter(o => a.selected.includes(o.id)).map(o => ({ id: o.id, label: o.label }));
       if (a.selected.includes('other')) answer.other_text = a.other_text;
       if (a.supplement.trim()) answer.supplement = a.supplement;
@@ -129,19 +134,22 @@ const Questionnaire = (() => {
     return value.split(/\r\n|\r|\n/).map(line => '> ' + markdownText(line)).join('\n');
   }
 
-  function markdown(answer) {
+  function markdown(answer, language = 'en') {
+    const labels = language === 'zh-CN'
+      ? { empty: '尚未填写答案。', answer: '答案：', answers: '答案：', other: '其他答案：', unspecified: '未说明', context: '补充说明：' }
+      : { empty: 'No answers yet.', answer: 'Answer: ', answers: 'Answers:', other: 'Other answer:', unspecified: 'Not specified', context: 'Additional context:' };
     const lines = ['# ' + markdownText(answer.title), ''];
-    if (!answer.answers.length) lines.push('No answers yet.', '');
+    if (!answer.answers.length) lines.push(labels.empty, '');
     for (const a of answer.answers) {
       lines.push('## ' + markdownText(a.question), '');
       const selected = (a.selected_options || []).filter(o => o.id !== 'other');
-      if (selected.length === 1) lines.push('Answer: ' + markdownText(selected[0].label), '');
-      if (selected.length > 1) lines.push('Answers:', '', ...selected.map(o => '- ' + markdownText(o.label)), '');
+      if (selected.length === 1) lines.push(labels.answer + markdownText(selected[0].label), '');
+      if (selected.length > 1) lines.push(labels.answers, '', ...selected.map(o => '- ' + markdownText(o.label)), '');
       if (Object.hasOwn(a, 'other_text')) {
-        if (a.other_text.trim()) lines.push('Other answer:', '', quote(a.other_text), '');
-        else lines.push('Other answer: Not specified', '');
+        if (a.other_text.trim()) lines.push(labels.other, '', quote(a.other_text), '');
+        else lines.push(labels.other + ' ' + labels.unspecified, '');
       }
-      if (a.supplement) lines.push('Additional context:', '', quote(a.supplement), '');
+      if (a.supplement) lines.push(labels.context, '', quote(a.supplement), '');
     }
     return lines.join('\n');
   }
